@@ -4,6 +4,7 @@ import { GalleryPage } from './pages/GalleryPage'
 import { GuidePage } from './pages/GuidePage'
 import { HomePage } from './pages/HomePage'
 import { ManagePage } from './pages/ManagePage'
+import { UploadPage } from './pages/UploadPage'
 import { WorkPage } from './pages/WorkPage'
 
 function Logo() {
@@ -32,8 +33,8 @@ export default function App() {
           <NavLink to="/gallery">作品画廊</NavLink>
           <NavLink to="/guide">观看指南</NavLink>
         </nav>
-        <NavLink className="header-action" to="/create">
-          打开实验台 <span>↗</span>
+        <NavLink className="header-action" to="/upload">
+          上传作品 <span>↑</span>
         </NavLink>
       </header>
 
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/create" element={<CreatePage />} />
           <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/upload" element={<UploadPage />} />
           <Route path="/works/:id" element={<WorkPage />} />
           <Route path="/manage/:id/:token" element={<ManagePage />} />
           <Route path="/guide" element={<GuidePage />} />

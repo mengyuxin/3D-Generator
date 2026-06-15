@@ -21,6 +21,8 @@ type StoredWork = {
   likes: number
   allowDownload: boolean
   status: 'public'
+  source?: string
+  sourceUrl?: string
   manageTokenHash: string
   consentVersion: string
   consentedAt: string
@@ -70,6 +72,17 @@ function publicWork({ manageTokenHash: _, consentVersion: __, consentedAt: ___, 
 
 function cleanText(value: unknown, maximum: number) {
   return String(value ?? '').replace(/[<>]/g, '').trim().slice(0, maximum)
+}
+
+function cleanUrl(value: unknown) {
+  const candidate = cleanText(value, 300)
+  if (!candidate) return ''
+  try {
+    const url = new URL(candidate)
+    return ['http:', 'https:'].includes(url.protocol) ? url.toString() : ''
+  } catch {
+    return ''
+  }
 }
 
 function hashToken(token: string) {
@@ -169,6 +182,8 @@ app.post('/api/works', publishRateLimit, upload.fields([
     likes: 0,
     allowDownload: request.body.allowDownload === 'true',
     status: 'public',
+    source: cleanText(request.body.source, 40),
+    sourceUrl: cleanUrl(request.body.sourceUrl),
     manageTokenHash: hashToken(manageToken),
     consentVersion: cleanText(request.body.consentVersion, 30) || '2026-06-14',
     consentedAt: new Date().toISOString(),

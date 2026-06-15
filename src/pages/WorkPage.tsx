@@ -58,7 +58,17 @@ export function WorkPage() {
           <div className="tag-list">{work.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div>
         </section>
         <aside>
-          <dl><div><dt>尺寸</dt><dd>{work.width} × {work.height}</dd></div><div><dt>格式</dt><dd>单幅裸眼立体画</dd></div><div><dt>观看方式</dt><dd>平行眼</dd></div></dl>
+          <dl>
+            <div><dt>尺寸</dt><dd>{work.width} × {work.height}</dd></div>
+            <div><dt>格式</dt><dd>单幅裸眼立体画</dd></div>
+            <div><dt>观看方式</dt><dd>平行眼</dd></div>
+            {work.source && <div><dt>创作来源</dt><dd>{work.source}</dd></div>}
+          </dl>
+          {work.sourceUrl && (
+            <a className="source-link" href={work.sourceUrl} target="_blank" rel="noreferrer">
+              查看来源页面 ↗
+            </a>
+          )}
           {work.allowDownload && <a className="primary-button" href={work.imageUrl} download={`${work.title}.png`}>下载作品 ↓</a>}
         </aside>
       </div>

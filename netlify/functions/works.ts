@@ -2,6 +2,7 @@ import { getStore } from '@netlify/blobs'
 import type { Config, Context } from '@netlify/functions'
 import {
   cleanText,
+  cleanUrl,
   hashToken,
   isSupportedImage,
   json,
@@ -116,6 +117,8 @@ async function createWork(request: Request, context: Context) {
     likes: 0,
     allowDownload: form.get('allowDownload') === 'true',
     status: 'public',
+    source: cleanText(form.get('source'), 40),
+    sourceUrl: cleanUrl(form.get('sourceUrl')),
     manageTokenHash: await hashToken(manageToken),
     consentVersion: cleanText(form.get('consentVersion'), 30) || '2026-06-14',
     consentedAt: new Date().toISOString(),

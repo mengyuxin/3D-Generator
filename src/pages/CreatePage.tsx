@@ -352,6 +352,7 @@ export function CreatePage() {
       form.append('width', String(settings.width))
       form.append('height', String(settings.height))
       form.append('allowDownload', String(allowDownload))
+      form.append('source', 'Depthloom 在线制作器')
       form.append('consent', 'true')
       form.append('consentVersion', '2026-06-14')
       const response = await publishWork(form)

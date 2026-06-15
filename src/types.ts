@@ -31,6 +31,8 @@ export type Work = {
   views: number
   likes: number
   allowDownload: boolean
+  source?: string
+  sourceUrl?: string
 }
 
 export type PublishResult = {

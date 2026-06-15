@@ -14,6 +14,8 @@ export type StoredWork = {
   likes: number
   allowDownload: boolean
   status: 'public'
+  source?: string
+  sourceUrl?: string
   manageTokenHash: string
   consentVersion: string
   consentedAt: string
@@ -30,6 +32,17 @@ export function publicWork({
 
 export function cleanText(value: FormDataEntryValue | null, maximum: number) {
   return String(value ?? '').replace(/[<>]/g, '').trim().slice(0, maximum)
+}
+
+export function cleanUrl(value: FormDataEntryValue | null) {
+  const candidate = cleanText(value, 300)
+  if (!candidate) return ''
+  try {
+    const url = new URL(candidate)
+    return ['http:', 'https:'].includes(url.protocol) ? url.toString() : ''
+  } catch {
+    return ''
+  }
 }
 
 export async function hashToken(token: string) {
