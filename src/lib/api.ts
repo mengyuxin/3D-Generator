@@ -1,4 +1,4 @@
-import type { PublishResult, Work } from '../types'
+import type { PublishResult, Work, WorkComment } from '../types'
 
 const API_BASE = '/api'
 
@@ -32,6 +32,22 @@ export async function publishWork(form: FormData): Promise<PublishResult> {
 export async function likeWork(id: string): Promise<{ likes: number }> {
   const response = await fetch(`${API_BASE}/works/${id}/like`, { method: 'POST' })
   if (!response.ok) throw new Error('点赞失败')
+  return response.json()
+}
+
+export async function addWorkComment(
+  id: string,
+  input: { author: string; body: string },
+): Promise<{ comments: WorkComment[] }> {
+  const response = await fetch(`${API_BASE}/works/${id}/comment`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+  if (!response.ok) {
+    const body = await response.json().catch(() => null)
+    throw new Error(body?.message || '评论提交失败')
+  }
   return response.json()
 }
 

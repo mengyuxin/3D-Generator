@@ -16,9 +16,17 @@ export type StoredWork = {
   status: 'public'
   source?: string
   sourceUrl?: string
+  comments?: WorkComment[]
   manageTokenHash: string
   consentVersion: string
   consentedAt: string
+}
+
+export type WorkComment = {
+  id: string
+  author: string
+  body: string
+  createdAt: string
 }
 
 export function publicWork({
@@ -27,14 +35,17 @@ export function publicWork({
   consentedAt: ___,
   ...work
 }: StoredWork) {
-  return work
+  return {
+    ...work,
+    comments: work.comments ?? [],
+  }
 }
 
-export function cleanText(value: FormDataEntryValue | null, maximum: number) {
+export function cleanText(value: unknown, maximum: number) {
   return String(value ?? '').replace(/[<>]/g, '').trim().slice(0, maximum)
 }
 
-export function cleanUrl(value: FormDataEntryValue | null) {
+export function cleanUrl(value: unknown) {
   const candidate = cleanText(value, 300)
   if (!candidate) return ''
   try {

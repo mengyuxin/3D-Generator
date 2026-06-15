@@ -119,6 +119,7 @@ async function createWork(request: Request, context: Context) {
     status: 'public',
     source: cleanText(form.get('source'), 40),
     sourceUrl: cleanUrl(form.get('sourceUrl')),
+    comments: [],
     manageTokenHash: await hashToken(manageToken),
     consentVersion: cleanText(form.get('consentVersion'), 30) || '2026-06-14',
     consentedAt: new Date().toISOString(),
@@ -135,6 +136,28 @@ async function updateWorkAction(id: string, action: string) {
   else return json({ message: '未知操作' }, 404)
   await writeWork(work)
   return json(action === 'view' ? { views: work.views } : { likes: work.likes })
+}
+
+async function addCommentFromRequest(request: Request, id: string) {
+  const work = await readWork(id)
+  if (!work) return json({ message: '作品不存在' }, 404)
+  const payload = await request.json().catch(() => null) as null | { author?: unknown; body?: unknown }
+  if (!payload || typeof payload.body !== 'string') {
+    return json({ message: '评论内容不能为空' }, 400)
+  }
+  const body = cleanText(payload.body, 500)
+  if (body.length < 2) return json({ message: '评论至少需要 2 个字' }, 400)
+  const author = cleanText(payload.author ?? '', 30) || '匿名访客'
+  const comments = work.comments ?? []
+  comments.push({
+    id: crypto.randomUUID(),
+    author,
+    body,
+    createdAt: new Date().toISOString(),
+  })
+  work.comments = comments.slice(-100)
+  await writeWork(work)
+  return json({ comments: work.comments })
 }
 
 async function deleteWork(request: Request, id: string) {
@@ -159,6 +182,7 @@ export default async (request: Request, context: Context) => {
   try {
     if (!id && request.method === 'GET') return listWorks(request)
     if (!id && request.method === 'POST') return createWork(request, context)
+    if (id && action === 'comment' && request.method === 'POST') return addCommentFromRequest(request, id)
     if (id && action && request.method === 'POST') return updateWorkAction(id, action)
     if (id && !action && request.method === 'GET') {
       const work = await readWork(id)

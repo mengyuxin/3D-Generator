@@ -117,6 +117,9 @@ img { display: block; max-width: 100%; }
 .work-meta h3 { margin: 0 0 4px; font-size: 17px; }
 .work-meta p, .work-stats { margin: 0; color: var(--faint); font: 10px var(--mono); }
 .work-stats { display: flex; gap: 12px; }
+.work-comments-strip { margin-top: 14px; padding: 12px; border: 1px solid var(--line); background: rgba(220,255,63,.035); min-height: 62px; }
+.work-comments-strip span { display: block; color: var(--acid); font: 9px var(--mono); letter-spacing: .08em; margin-bottom: 6px; }
+.work-comments-strip p { margin: 0; color: #aab3ac; font-size: 11px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .empty-gallery { border: 1px solid var(--line); padding: 80px 24px; text-align: center; background: #101411; }
 .empty-gallery h3 { font-size: 25px; margin: 24px 0 10px; }
 .empty-gallery p { color: var(--muted); margin-bottom: 28px; }
@@ -287,6 +290,29 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 10px; heigh
 .fullscreen-viewer { position: fixed; inset: 0; background: rgba(0,0,0,.96); z-index: 120; display: grid; place-items: center; padding: 40px; cursor: zoom-out; }
 .fullscreen-viewer img { max-height: 95vh; max-width: 95vw; }
 .fullscreen-viewer button { position: absolute; top: 20px; right: 25px; background: #151915; border: 1px solid var(--line); padding: 9px 13px; cursor: pointer; }
+.comments-section { padding: 75px 0 0; border-top: 1px solid var(--line); }
+.comments-heading { display: flex; align-items: end; justify-content: space-between; margin-bottom: 28px; }
+.comments-heading h2 { margin: 8px 0 0; font-size: clamp(34px, 4vw, 58px); letter-spacing: -.05em; }
+.comments-heading > span { color: var(--faint); font: 10px var(--mono); padding-bottom: 10px; }
+.comments-layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; }
+.comment-list { display: grid; gap: 12px; }
+.comment-card { border: 1px solid var(--line); background: var(--panel); padding: 18px; }
+.comment-card header { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 11px; }
+.comment-card b { color: var(--acid); font-size: 12px; }
+.comment-card time { color: var(--faint); font: 9px var(--mono); white-space: nowrap; }
+.comment-card p { margin: 0; color: #c8d0ca; line-height: 1.75; font-size: 13px; white-space: pre-wrap; }
+.empty-comments { min-height: 260px; display: grid; place-items: center; text-align: center; border: 1px dashed rgba(220,255,63,.25); background: #0d110e; padding: 34px; }
+.empty-comments span { width: 48px; height: 48px; display: grid; place-items: center; color: var(--acid); border: 1px solid var(--line); margin-bottom: 16px; font: 20px var(--mono); }
+.empty-comments h3 { margin: 0 0 8px; }
+.empty-comments p { color: var(--muted); margin: 0; line-height: 1.7; max-width: 420px; }
+.comment-form { position: sticky; top: 18px; border: 1px solid var(--line); background: var(--panel); padding: 22px; }
+.comment-form h3 { margin: 8px 0 18px; font-size: 22px; }
+.comment-form label { display: grid; gap: 8px; margin: 16px 0; color: #aeb6b0; font-size: 10px; }
+.comment-form input, .comment-form textarea { width: 100%; color: white; background: #0b0f0c; border: 1px solid var(--line); padding: 12px; outline: none; }
+.comment-form input:focus, .comment-form textarea:focus { border-color: var(--acid); }
+.comment-form textarea { min-height: 145px; resize: vertical; }
+.comment-form-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; }
+.comment-form-foot > span { color: var(--faint); font: 9px var(--mono); }
 .manage-page { max-width: 760px; min-height: 70vh; }
 .manage-page h1 { font-size: 55px; letter-spacing: -.05em; margin-bottom: 10px; }
 .manage-page > p { color: var(--muted); }
@@ -406,6 +432,11 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 10px; heigh
   .detail-stats { width: fit-content; margin-top: 20px; }
   .work-viewer { min-height: 360px; padding-left: 10px; padding-right: 10px; }
   .work-information aside { border: 0; padding-left: 0; }
+  .comments-layout { grid-template-columns: 1fr; }
+  .comment-form { position: static; order: -1; }
+  .comments-heading { align-items: start; }
+  .comment-card header { display: block; }
+  .comment-card time { display: block; margin-top: 6px; }
   .upload-hero { grid-template-columns: 1fr; gap: 32px; padding-bottom: 45px; }
   .upload-hero h1 { font-size: clamp(54px, 16vw, 78px); }
   .external-upload-layout { grid-template-columns: 1fr; }

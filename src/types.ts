@@ -33,6 +33,14 @@ export type Work = {
   allowDownload: boolean
   source?: string
   sourceUrl?: string
+  comments?: WorkComment[]
+}
+
+export type WorkComment = {
+  id: string
+  author: string
+  body: string
+  createdAt: string
 }
 
 export type PublishResult = {

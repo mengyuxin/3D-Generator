@@ -23,9 +23,17 @@ type StoredWork = {
   status: 'public'
   source?: string
   sourceUrl?: string
+  comments?: WorkComment[]
   manageTokenHash: string
   consentVersion: string
   consentedAt: string
+}
+
+type WorkComment = {
+  id: string
+  author: string
+  body: string
+  createdAt: string
 }
 
 const root = process.cwd()
@@ -67,7 +75,10 @@ async function writeWorks(works: StoredWork[]) {
 }
 
 function publicWork({ manageTokenHash: _, consentVersion: __, consentedAt: ___, ...work }: StoredWork) {
-  return work
+  return {
+    ...work,
+    comments: work.comments ?? [],
+  }
 }
 
 function cleanText(value: unknown, maximum: number) {
@@ -184,6 +195,7 @@ app.post('/api/works', publishRateLimit, upload.fields([
     status: 'public',
     source: cleanText(request.body.source, 40),
     sourceUrl: cleanUrl(request.body.sourceUrl),
+    comments: [],
     manageTokenHash: hashToken(manageToken),
     consentVersion: cleanText(request.body.consentVersion, 30) || '2026-06-14',
     consentedAt: new Date().toISOString(),
@@ -202,6 +214,25 @@ app.post('/api/works/:id/like', async (request, response) => {
   work.likes += 1
   await writeWorks(works)
   response.json({ likes: work.likes })
+})
+
+app.post('/api/works/:id/comment', async (request, response) => {
+  const works = await readWorks()
+  const work = works.find((entry) => entry.id === request.params.id)
+  if (!work) return response.status(404).json({ message: '作品不存在' })
+  const body = cleanText(request.body?.body, 500)
+  if (body.length < 2) return response.status(400).json({ message: '评论至少需要 2 个字' })
+  const author = cleanText(request.body?.author, 30) || '匿名访客'
+  const comments = work.comments ?? []
+  comments.push({
+    id: crypto.randomUUID(),
+    author,
+    body,
+    createdAt: new Date().toISOString(),
+  })
+  work.comments = comments.slice(-100)
+  await writeWorks(works)
+  response.status(201).json({ comments: work.comments })
 })
 
 app.delete('/api/works/:id', async (request, response) => {

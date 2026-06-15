@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import type { Work } from '../types'
 
 export function WorkCard({ work, featured = false }: { work: Work; featured?: boolean }) {
+  const latestComment = work.comments?.at(-1)
+
   return (
     <article className={`work-card ${featured ? 'featured' : ''}`}>
       <Link className="work-image" to={`/works/${work.id}`}>
@@ -16,7 +18,21 @@ export function WorkCard({ work, featured = false }: { work: Work; featured?: bo
         <div className="work-stats">
           <span>◉ {work.views}</span>
           <span>♥ {work.likes}</span>
+          <span>✎ {work.comments?.length ?? 0}</span>
         </div>
+      </div>
+      <div className="work-comments-strip">
+        {latestComment ? (
+          <>
+            <span>{latestComment.author}</span>
+            <p>{latestComment.body}</p>
+          </>
+        ) : (
+          <>
+            <span>COMMENT</span>
+            <p>还没有评论，点击作品进入详情页留言。</p>
+          </>
+        )}
       </div>
     </article>
   )

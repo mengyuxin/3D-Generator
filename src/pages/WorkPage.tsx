@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { getWork, likeWork, recordWorkView } from '../lib/api'
+import { addWorkComment, getWork, likeWork, recordWorkView } from '../lib/api'
 import type { Work } from '../types'
 
 export function WorkPage() {
@@ -8,6 +8,10 @@ export function WorkPage() {
   const [work, setWork] = useState<Work | null>(null)
   const [error, setError] = useState('')
   const [fullscreen, setFullscreen] = useState(false)
+  const [commentAuthor, setCommentAuthor] = useState('')
+  const [commentBody, setCommentBody] = useState('')
+  const [commentError, setCommentError] = useState('')
+  const [commenting, setCommenting] = useState(false)
 
   useEffect(() => {
     getWork(id)
@@ -72,6 +76,90 @@ export function WorkPage() {
           {work.allowDownload && <a className="primary-button" href={work.imageUrl} download={`${work.title}.png`}>下载作品 ↓</a>}
         </aside>
       </div>
+
+      <section className="comments-section">
+        <div className="comments-heading">
+          <div>
+            <span className="kicker">VISITOR NOTES</span>
+            <h2>评论</h2>
+          </div>
+          <span>{work.comments?.length ?? 0} 条留言</span>
+        </div>
+
+        <div className="comments-layout">
+          <div className="comment-list">
+            {work.comments?.length ? (
+              work.comments.slice().reverse().map((comment) => (
+                <article className="comment-card" key={comment.id}>
+                  <header>
+                    <b>{comment.author}</b>
+                    <time>{new Date(comment.createdAt).toLocaleString('zh-CN')}</time>
+                  </header>
+                  <p>{comment.body}</p>
+                </article>
+              ))
+            ) : (
+              <div className="empty-comments">
+                <span>✎</span>
+                <h3>还没有人留下观看感受</h3>
+                <p>可以分享你看到了什么、用了多久看出来，或者给作者一点反馈。</p>
+              </div>
+            )}
+          </div>
+
+          <form
+            className="comment-form"
+            onSubmit={async (event) => {
+              event.preventDefault()
+              if (!work || commenting) return
+              setCommentError('')
+              setCommenting(true)
+              try {
+                const result = await addWorkComment(work.id, {
+                  author: commentAuthor,
+                  body: commentBody,
+                })
+                setWork({ ...work, comments: result.comments })
+                setCommentBody('')
+              } catch (caught) {
+                setCommentError(caught instanceof Error ? caught.message : '评论提交失败')
+              } finally {
+                setCommenting(false)
+              }
+            }}
+          >
+            <span className="kicker">ADD COMMENT</span>
+            <h3>写下你的观看结果</h3>
+            <label>
+              昵称
+              <input
+                maxLength={30}
+                value={commentAuthor}
+                onChange={(event) => setCommentAuthor(event.target.value)}
+                placeholder="匿名访客"
+              />
+            </label>
+            <label>
+              评论 *
+              <textarea
+                required
+                minLength={2}
+                maxLength={500}
+                value={commentBody}
+                onChange={(event) => setCommentBody(event.target.value)}
+                placeholder="例如：我看到了一个向前凸出的球体，大概 15 秒看出来。"
+              />
+            </label>
+            <div className="comment-form-foot">
+              <span>{commentBody.length}/500</span>
+              <button className="primary-button" disabled={commenting || commentBody.trim().length < 2}>
+                {commenting ? '提交中…' : '发表评论 →'}
+              </button>
+            </div>
+            {commentError && <div className="error-banner">{commentError}</div>}
+          </form>
+        </div>
+      </section>
 
       {fullscreen && (
         <div className="fullscreen-viewer" onClick={() => setFullscreen(false)}>
